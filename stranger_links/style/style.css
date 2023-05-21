@@ -1,0 +1,47 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  @font-face {
+    font-family: Benguiat;
+    src: url("../font/BenguiatStd-Medium.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Benguiat;
+    font-weight: bold;
+    src: url("../font/BenguiatStd-Bold.otf") format("opentype");
+}
+  
+  body {
+    background-color: whitesmoke;
+    
+    
+    
+  }
+  .turn {
+    position: relative;
+    text-align: center;
+    font-family: 'Benguiat';
+  }
+  .turn span {
+    position: relative;
+    display: inline-block;
+    font-size: 40px;
+    color: red;
+    text-transform: uppercase;
+    animation: flip 8s ;
+    animation-delay: calc(.2s * var(--i));
+    animation-fill-mode:forwards
+  }
+  
+  @keyframes flip {
+    from{transform: rotateZ(0Deg)}
+    
+     to{
+      transform: rotateZ(180Deg) 
+    }
+  }
+  

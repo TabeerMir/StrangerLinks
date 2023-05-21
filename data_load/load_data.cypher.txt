@@ -1,0 +1,93 @@
+//1. Create characters
+CALL apoc.load.json("file:///characters.json") YIELD value
+UNWIND value.characters as ch
+CREATE (c:Character{characterName: ch.characterName, actorName: ch.actorName, actorLink: ch.actorLink, credited:ch.credited, characterImageThumb:ch.characterImageThumb,characterImageFull:ch.characterImageFull, characterNameAlt:ch.characterNameAlt,nickname:ch.nickname})
+;
+//2. Create parent-child relationships
+CALL apoc.load.json("file:///characters.json") YIELD value
+UNWIND value.characters as ch WITH ch
+where ch.parents IS NOT NULL
+MATCH (c:Character {characterName: ch.characterName})
+UNWIND ch.parents as parent
+MATCH (p1:Character {characterName:parent})
+CREATE (c)-[:HAS_PARENT]->(p1)
+CREATE (c)<-[:HAS_CHILD]-(p1)
+;
+//3. Create killed-by relationship
+CALL apoc.load.json("file:///characters.json") YIELD value
+UNWIND value.characters as ch WITH ch
+where ch.killedBy IS NOT NULL
+MATCH (c:Character {characterName: ch.characterName})
+UNWIND ch.killedBy as kb
+MATCH (p1:Character {characterName:kb})
+CREATE (c)-[:KILLED_BY]->(p1)
+CREATE (c)<-[:KILLED]-(p1)
+;
+//4. Create sibling relationship
+CALL apoc.load.json("file:///characters.json") YIELD value
+UNWIND value.characters as ch WITH ch
+where ch.siblings IS NOT NULL
+MATCH (c:Character {characterName: ch.characterName})
+UNWIND ch.siblings as s
+MATCH (p1:Character {characterName:s})
+CREATE (c)-[:HAS_SIBLING]->(p1)
+CREATE (c)<-[:HAS_SIBLING]-(p1)
+;
+//5. Create marriage relationship
+CALL apoc.load.json("file:///characters.json") YIELD value
+UNWIND value.characters as ch WITH ch
+where ch.marriedEngaged IS NOT NULL
+MATCH (c:Character {characterName: ch.characterName})
+UNWIND ch.marriedEngaged as m
+MATCH (p1:Character {characterName:m})
+CREATE (c)-[:IS_MARRIED_TO]->(p1)
+CREATE (c)<-[:IS_MARRIED_TO]-(p1)
+;
+//6. Create locations
+CALL apoc.load.json("file:///locations.json") YIELD value
+UNWIND value.regions as r
+CREATE (l:Location {name:r.location})
+;
+//7. Create sublocations and link to locations
+CALL apoc.load.json("file:///locations.json") YIELD value
+UNWIND value.regions as r
+WITH r
+UNWIND r.subLocation as sl WITH r,sl
+MATCH (l:Location {name:r.location})
+CREATE (s:Sublocation {name:sl})
+Create (l)-[:HAS_SUBLOCATION]->(s)
+;
+//8. Create seasons
+CALL apoc.load.json("file:///episodes.json") YIELD value
+UNWIND value.episodes as e
+WITH e
+MERGE (s:Season {number:e.seasonNum})
+;
+//9. Create episodes and assign to seasons
+CALL apoc.load.json("file:///episodes.json") YIELD value
+UNWIND value.episodes as e
+WITH e
+MATCH (s:Season {number:e.seasonNum})
+CREATE (ep:Episode{number:e.episodeNum, title:e.episodeTitle, airDate:e.episodeAirDate, description:e.episodeDescription})
+CREATE (s)-[:HAS_EPISODE]->(ep)
+CREATE (s)<-[:HAS_SEASON]-(ep)
+;
+//10. Create scenes and assign to episodes in a season, link scenes with characters, link scenes with sublocations
+CALL apoc.load.json("file:///episodes.json") YIELD value
+UNWIND value.episodes as e
+WITH e
+MATCH (s:Season {number:e.seasonNum})-[:HAS_EPISODE]->(ep:Episode{number:e.episodeNum})
+UNWIND e.scenes as scene with s, ep, scene
+MATCH (l:Sublocation{name:scene.subLocation})
+CREATE (sc:Scene{sceneStart:scene.sceneStart, sceneEnd:scene.sceneEnd, date:scene.sceneEnd})
+CREATE (sc)-[:IN_EPISODE]->(ep)
+CREATE (sc)<-[:HAS_SCENE]-(ep)
+CREATE (sc)-[:HAS_SUBLOCATION]->(l)
+CREATE (sc)<-[:HAS_SCENE]-(l)
+WITH scene, sc
+UNWIND scene.characters as ch
+WITH ch, sc
+MATCH (c:Character{characterName:ch.name})
+CREATE (sc)-[:HAS_CHARACTER]->(c)
+CREATE (sc)<-[:IN_SCENE]-(c)
+;

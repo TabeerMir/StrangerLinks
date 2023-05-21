@@ -1,0 +1,75 @@
+Apoc.conf
+apoc.import.file.enabled=true
+
+Install neo4j desktop
+Install apoc from plugins
+Enable security setting in neo4j.conf in the dbmss folder
+
+C:\Users\sm663903\.Neo4jDesktop\relate-data\dbmss\dbms-f2feac60-3fb8-45c7-8cf2-06ad98dec35a\conf
+
+# A comma separated list of procedures and user defined functions that are allowed
+# full access to the database through unsupported/insecure internal APIs.
+dbms.security.procedures.unrestricted=jwt.security.*,apoc.*
+
+# A comma separated list of procedures to be loaded by default.
+# Leaving this unconfigured will load all procedures found.
+dbms.security.procedures.allowlist=apoc.*,apoc.load.*,gds.*,apoc.import.*
+
+
+Copy jsons into import folder
+
+C:\Users\sm663903\.Neo4jDesktop\relate-data\dbmss\dbms-f2feac60-3fb8-45c7-8cf2-06ad98dec35a\import
+
+
+call db.schema.visualization()
+Schema
+
+Chart of who has most number of scenes
+MATCH (s:Scene)<-[:IN_SCENE]-(c2:Character) return c2.characterName, count(c2.characterName) as c ORDER BY c DESC;
+
+
+Number of scenes shared between  2 people
+Sort of:
+MATCH (c:Character{characterName:"The Monster"})-[:IN_SCENE]->(s)<-[:IN_SCENE]-(c2:Character) return distinct c2;
+
+
+Scenes by location
+Match (s:Scene)-[:HAS_SUBLOCATION]->(sl:Sublocation) return sl.name, count(sl.name) as i order by i desc
+
+Chart of most popular locations (wrong - differentiate the upside down)
+Match (s:Scene)-[:HAS_SUBLOCATION]->(sl:Sublocation) return sl.name, count(sl.name) as i order by i desc
+
+Number of episodes shared between  2 people desc (cooccurrence )
+
+Where (location)  a character spends most of their time (chart of locations) (heatmap? Get a map of hawkins)
+
+Who has shared a scene with the demogorgan "The Monster"
+MATCH (c:Character{characterName:"The Monster"})-[:IN_SCENE]->(s)<-[:IN_SCENE]-(c2:Character) return distinct c2;
+
+
+Family of a person
+Match (ch1:Character {characterName:"Mike Wheeler"})-[]-(ch2:Character) return *;
+
+How many scenes are there in the upside down
+How many scenes are there of the monster
+People in the upside down
+
+
+Gpt
+
+Season summary synopsis 
+Word cloud for season using episode description
+Episode theme
+Social network of each season using episode descriptions (weights)
+
+
+Social network using scene characters - social network per episode - visualise social networks of 2 episodes 
+
+Shortest path
+
+
+https://neo4j.com/developer/tools-graph-visualization/
+graph algorithm library in ne04j
+neovis
+
+node similarity
