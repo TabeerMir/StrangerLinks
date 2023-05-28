@@ -1,6 +1,58 @@
 <html>
     <head>
-        <title>strangerlinksgraph1</title>
+        <title>Character Families</title>
+        
+        <script src="https://unpkg.com/neovis.js@2.0.2"></script>
+        <style>
+            #viz {
+                width: 900px;
+                height: 700px;
+                border: 1px solid lightgray;
+                font: 22pt arial;
+            }
+        </style>
+        <script type="text/javascript">
+
+            let neoViz;
+        
+            function draw() {
+                const config = {
+                    containerId: "viz",
+                    neo4j: {
+                        serverUrl: "bolt://localhost:7687",
+                        serverUser: "neo4j",
+                        serverPassword: "12345678",
+                    },
+                    labels: {
+                        Character: {
+                            label: "characterName",
+                            
+                        }
+                    },
+                    relationships: {
+                        HAS_PARENT: {
+                            label: "someth",
+                            title: "test"
+                        },
+                        HAS_SIBLING: {
+                            label: "someth",
+                            title: "test"
+                        }
+
+                    },
+                    
+                    initialCypher: "Match (ch1:Character {characterName:'Mike Wheeler'})-[r]-(ch2:Character) return *;"
+                };
+                
+        
+                neoViz = new NeoVis.default(config);
+                neoViz.render();
+            }
+        </script>
     </head>
-    <a href="upside_down.html" style="color: red"> <h4 style="font-family: Benguiat">back to the upside down </h4></a>
+    <body onload="draw()">
+        <div id="viz"></div>
+        <a href="upside_down.html" style="color: red"> <h4 style="font-family: Benguiat">back to the upside down </h4></a>
+    </body>
+    
 </html>
