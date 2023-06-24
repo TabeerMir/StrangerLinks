@@ -3,55 +3,58 @@
         <title>Character Families</title>
         
         <script src="https://unpkg.com/neovis.js@2.0.2"></script>
-        <style>
-            #viz {
-                width: 900px;
-                height: 700px;
-                border: 1px solid lightgray;
-                font: 22pt arial;
-            }
-        </style>
+        <script src="https://unpkg.com/neo4j-driver"></script>
+        <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.25.0/dist/cytoscape.min.js"></script>
+        
         <script type="text/javascript">
-
-            let neoViz;
-        
-            function draw() {
-                const config = {
-                    containerId: "viz",
-                    neo4j: {
-                        serverUrl: "bolt://localhost:7687",
-                        serverUser: "neo4j",
-                        serverPassword: "12345678",
-                    },
-                    labels: {
-                        Character: {
-                            label: "characterName",
-                            
-                        }
-                    },
-                    relationships: {
-                        HAS_PARENT: {
-                            label: "someth",
-                            title: "test"
-                        },
-                        HAS_SIBLING: {
-                            label: "someth",
-                            title: "test"
-                        }
-
-                    },
-                    
-                    initialCypher: "Match (ch1:Character {characterName:'Mike Wheeler'})-[r]-(ch2:Character) return *;"
-                };
-                
-        
-                neoViz = new NeoVis.default(config);
-                neoViz.render();
+            function draw(){
+                var driver = neo4j.driver(
+                  'neo4j://localhost',
+                  neo4j.auth.basic('neo4j', '12345678')
+                )
+                var mydata = [];
+                var session = driver.session({ defaultAccessMode: neo4j.session.READ })
+                session
+                    .run("Match (ch1:Character {characterName:$nameParam})-[r]->(ch2:Character) return ch1.characterName as name1,TYPE(r) as rname,ch2.characterName as name2;", {
+                        nameParam: 'Mike Wheeler'
+                    })
+                    .then(result => {
+                        result.records.forEach(record => {
+                        mydata.push([record.get('name1'), record.get("rname"), record.get("name2")])
+                        
+                        })
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .then(() => session.close())
+                console.log(mydata)
+                var cy = cytoscape({
+                    container: document.getElementById('cy'), // container to render in
+                    elements: [
+  // nodes
+  { data: { id: 'a' } },
+  { data: { id: 'b' } }]
+                });
+                for (var i = 0; i < 10; i++) {
+    cy.add({
+        data: { id:  i}
+        }
+    );
+    
+}
             }
         </script>
+        <style>
+            #cy {
+  width: 500px;
+  height: 500px;
+  
+}
+        </style>
     </head>
     <body onload="draw()">
-        <div id="viz"></div>
+        <div id="cy"></div>
         <a href="upside_down.html" style="color: red"> <h4 style="font-family: Benguiat">back to the upside down </h4></a>
     </body>
     
