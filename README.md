@@ -4,7 +4,7 @@ This is my project to explore graphs, AI, data science and embeddings using data
 
 ### Data
 
-The orignial data was download from a [repo](https://github.com/jeffreylancaster/stranger-things) and is available in JSON format. 
+The orignial data was downloaded from a [repo](https://github.com/jeffreylancaster/stranger-things) and is available in JSON format. 
 
 ### Neo4J
 
