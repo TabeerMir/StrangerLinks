@@ -12,4 +12,6 @@ I used Neo4J as my graph DB of choice. The data loading cyphers are available un
 
 ### Node Similarity
 
-One of the reasons for using Neo4J was the Graph Data Science library. I used the FastRP method to calculate embeddings for different characters, and then used K-Nearest Neighbours to find the most similar characters.
+One of the reasons for using Neo4J was the Graph Data Science library. I used the FastRP method to calculate embeddings for different characters, and then used K-Nearest Neighbours to find the most similar characters. Here's what the similarity graph look like for the character Eleven:
+
+![](https://github.com/TabeerMir/StrangerLinks/assets/134224968/173d2f49-9d5d-4dbd-a365-cd60f7116b34)
